@@ -1,0 +1,54 @@
+---
+title: "Prairie Summaries"
+author: "SE"
+date: "11/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(lubridate)
+
+prairie <- read.csv("prairie raw data 2.csv")
+
+```
+
+## R 
+
+
+```{r }
+head(prairie)
+summary(prairie)
+
+sapply(prairie, function(x) length(unique(x)))
+
+##should I merge site & plant ID??
+
+average_neighbors <- prairie %>%
+  pivot_longer(c(ACHMIL:Vulpia.sp), names_to = "neighbor.sp", values_to = "count") %>%
+  filter(count != 0) %>%
+  group_by(site, plantID, species, flowers) %>%
+  tally()
+
+hist(average_neighbors$n, breaks = 10, xlim = c(0,12))
+hist(average_neighbors$flowers, breaks = 16)
+
+## didn't use
+#data$new <- rowSums( data[,43:167] )
+#prairie$row_sum <- rowSums(prairie[ , c(7:50)], na.rm=TRUE)
+
+ggplot(average_neighbors, aes(x=n, y=flowers)) + geom_point() + geom_smooth() + labs(x="# of neighbors", y="# of flowers response")
+
+
+  
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
